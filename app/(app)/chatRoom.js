@@ -1,4 +1,12 @@
-import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  Animated,
+  Keyboard,
+} from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -17,20 +25,27 @@ import {
   addDoc,
   collection,
   doc,
+  getDoc,
   onSnapshot,
   orderBy,
   query,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 
 export default function chatRoom() {
   const item = useLocalSearchParams(); // Second user
-  const { user } = useAuth();
-  const router = useRouter();
+
   const [messages, setMessages] = useState([]);
+
   const textRef = useRef("");
   const inputRef = useRef(null);
+  const scrollViewRef = useRef(null);
+
+  const { user } = useAuth();
+
+  const router = useRouter();
 
   useEffect(() => {
     createRoomIfNotExists();
@@ -44,11 +59,34 @@ export default function chatRoom() {
       let allMessages = snapshot.docs.map((doc) => {
         return doc.data();
       });
+      let readMessages = snapshot.docs.forEach(async (doc) => {
+        if (!doc.data().read) {
+          await updateDoc(doc.ref, { read: true });
+        }
+      });
       setMessages([...allMessages]);
     });
 
-    return unsub;
+    const KeyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      updateScrollView
+    );
+
+    return () => {
+      return unsub();
+      KeyboardDidShowListener.remove();
+    };
   }, []);
+
+  useEffect(() => {
+    updateScrollView();
+  }, [messages]);
+
+  const updateScrollView = () => {
+    setTimeout(() => {
+      scrollViewRef?.current?.scrollToEnd({ Animated: true });
+    }, 100);
+  };
 
   const createRoomIfNotExists = async () => {
     // RoomId
@@ -75,6 +113,13 @@ export default function chatRoom() {
         profileUrl: user?.profileUrl,
         senderName: user?.username,
         createdAt: Timestamp.fromDate(new Date()),
+        read: false,
+      });
+
+      await updateDoc(docRef, {
+        [`users.${user.userId}.lastReadTimestamp`]: Timestamp.fromDate(
+          new Date()
+        ),
       });
     } catch (error) {
       Alert.alert("Message", error.message);
@@ -89,7 +134,11 @@ export default function chatRoom() {
         <View className="h-3 border-b border-neutral-300" />
         <View className="flex-1 justify-between bg-neutral-100 overflow-visible">
           <View className="flex-1">
-            <MessageList messages={messages} currentUser={user} />
+            <MessageList
+              scrollViewRef={scrollViewRef}
+              messages={messages}
+              currentUser={user}
+            />
           </View>
           <View style={{ marginBottom: hp(2) }} className="pt-2">
             <View className="flex-row justify-between items-center mx-4">

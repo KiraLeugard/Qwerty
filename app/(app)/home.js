@@ -13,6 +13,7 @@ import { usersRef } from "../../firebaseConfig";
 export default function home() {
   const { logout, user } = useAuth();
   const [users, setUsers] = useState([]);
+
   useEffect(() => {
     if (user?.uid) getUsers();
   }, []);
@@ -28,11 +29,12 @@ export default function home() {
 
     setUsers(data);
   };
+
   return (
     <View className="flex-1 bg-white">
       <StatusBar style="light" />
       {users.length > 0 ? (
-        <ChatList users={users} />
+        <ChatList currentUser={user} users={users} />
       ) : (
         <View className="flex items-center" style={{ top: hp(30) }}>
           <ActivityIndicator size="large" />
