@@ -7,8 +7,6 @@ Welcome to Qwerty, a simple and user-friendly chat application designed for seam
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Configuration](#configuration)
-- [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
 
