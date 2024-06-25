@@ -19,6 +19,8 @@ Welcome to Qwerty, a simple and user-friendly chat application designed for seam
 
 ## Installation
 
+- Head to the [Release](https://github.com/KiraLeugard/Qwerty/releases/tag/app)
+
 ## Usage
 
 1. **Register an account**: Open the app and create a new account.
@@ -33,7 +35,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 For any questions or suggestions, please contact:
 
-- **Email**: support@qwertyapp.com
-- **GitHub Issues**: [https://github.com/yourusername/qwerty/issues](https://github.com/yourusername/qwerty/issues)
+- **Email**: islahulkafa01@gmail.com
+- **GitHub Issues**: [https://github.com/KiraLeugard/Qwerty/issues](https://github.com/KiraLeugard/Qwerty/issues)
 
 Thank you for using Qwerty! Happy chatting!
